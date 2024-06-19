@@ -38,6 +38,7 @@ builder.Services.AddSingleton<IIndividualMessageRepository, IndividualMessageRep
 builder.Services.AddSingleton<IUserService, UserService>();
 builder.Services.AddSingleton<IIndividualMessageService, IndividualMessageService>();
 builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+builder.Services.AddSingleton<IGuidProvider, GuidProvider>();
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();

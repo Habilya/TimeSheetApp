@@ -1,15 +1,18 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using TimeSheetApp.Library.Logging;
+using TimeSheetApp.Library.Providers;
 
 namespace TimeSheetApp.Api.Infrastructure;
 
 public class GlobalExceptionHandler : IExceptionHandler
 {
 	private readonly ILoggerAdapter<GlobalExceptionHandler> _logger;
+	private readonly IGuidProvider _guidProvider;
 
-	public GlobalExceptionHandler(ILoggerAdapter<GlobalExceptionHandler> logger)
+	public GlobalExceptionHandler(ILoggerAdapter<GlobalExceptionHandler> logger, IGuidProvider guidProvider)
 	{
 		_logger = logger;
+		_guidProvider = guidProvider;
 	}
 
 	public async ValueTask<bool> TryHandleAsync(
@@ -17,7 +20,7 @@ public class GlobalExceptionHandler : IExceptionHandler
 		Exception exception,
 		CancellationToken cancellationToken)
 	{
-		var guid = Guid.NewGuid();
+		var guid = _guidProvider.NewGuid();
 		_logger.LogWarning($"[Unhandled Exception] ref.: {guid}");
 
 		httpContext.Response.StatusCode = 500;
