@@ -1,5 +1,4 @@
-﻿using Bogus;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
@@ -14,38 +13,18 @@ using TimeSheetApp.Library.Providers;
 
 namespace TimeSheetApp.Api.Tests.Unit;
 
-public class UserControllerTests
+public class UserControllerTests : IClassFixture<UserTestsFixture>
 {
 	private readonly UserController _sut;
+	private readonly UserTestsFixture _fixture;
 	private readonly IUserService _userService = Substitute.For<IUserService>();
 	private readonly IDateTimeProvider _dateTimeProvider = Substitute.For<IDateTimeProvider>();
 
 
-	public UserControllerTests()
+	public UserControllerTests(UserTestsFixture fixture)
 	{
 		_sut = new UserController(_userService, _dateTimeProvider);
-	}
-
-	private static Faker<User> GetUserGenerator()
-	{
-		return new Faker<User>()
-			.RuleFor(e => e.Id, _ => Guid.NewGuid())
-			.RuleFor(e => e.UserName, (f, e) => f.Internet.UserName(e.FirstName, e.LastName))
-			.RuleFor(e => e.FirstName, f => f.Name.FirstName())
-			.RuleFor(e => e.LastName, f => f.Name.LastName())
-			.RuleFor(e => e.Email, (f, e) => f.Internet.Email(e.FirstName, e.LastName))
-			.RuleFor(e => e.DateOfBirth, f => f.Date.Recent(100))
-			.RuleFor(e => e.DateCreated, f => f.Date.Recent(100));
-	}
-
-	private static Faker<UserCreateRequest> GetUserCreateRequestGenerator()
-	{
-		return new Faker<UserCreateRequest>()
-			.RuleFor(e => e.UserName, (f, e) => f.Internet.UserName(e.FirstName, e.LastName))
-			.RuleFor(e => e.FirstName, f => f.Name.FirstName())
-			.RuleFor(e => e.LastName, f => f.Name.LastName())
-			.RuleFor(e => e.Email, (f, e) => f.Internet.Email(e.FirstName, e.LastName))
-			.RuleFor(e => e.DateOfBirth, f => f.Date.Recent(100));
+		_fixture = fixture;
 	}
 
 
@@ -53,7 +32,7 @@ public class UserControllerTests
 	public async Task GetById_ReturnOkAndObject_WhenUserExists()
 	{
 		// Arrange
-		var user = GetUserGenerator().Generate(1).First();
+		var user = _fixture.GetUserGenerator().Generate(1).First();
 		_userService.GetAsync(user.Id).Returns(user);
 
 		// Act
@@ -95,7 +74,7 @@ public class UserControllerTests
 	public async Task GetAll_ReturnOkAndObject_WhenUserExists()
 	{
 		// Arrange
-		var users = GetUserGenerator().Generate(2);
+		var users = _fixture.GetUserGenerator().Generate(2);
 		_userService.GetAllAsync().Returns(users);
 
 		// Act
@@ -113,7 +92,7 @@ public class UserControllerTests
 		var expectedCreatedDate = new DateTime(2020, 1, 1, 20, 0, 0);
 		_dateTimeProvider.DateTimeNow.Returns(expectedCreatedDate);
 
-		var user = GetUserCreateRequestGenerator().Generate(1).First();
+		var user = _fixture.GetUserCreateRequestGenerator().Generate(1).First();
 
 		var createdUser = new User
 		{

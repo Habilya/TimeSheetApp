@@ -1,10 +1,8 @@
-﻿using Bogus;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using NSubstitute.ReturnsExtensions;
 using TimeSheetApp.Api.Contracts.Data;
-using TimeSheetApp.Api.Domain;
 using TimeSheetApp.Api.Mapping;
 using TimeSheetApp.Api.Repositories;
 using TimeSheetApp.Api.Services;
@@ -12,39 +10,17 @@ using TimeSheetApp.Library.Logging;
 
 namespace TimeSheetApp.Api.Tests.Unit;
 
-public class UserServiceTests
+public class UserServiceTests : IClassFixture<UserTestsFixture>
 {
 	private readonly UserService _sut;
+	private readonly UserTestsFixture _fixture;
 	private readonly IUserRepository _userRepository = Substitute.For<IUserRepository>();
 	private readonly ILoggerAdapter<UserService> _logger = Substitute.For<ILoggerAdapter<UserService>>();
 
-	public UserServiceTests()
+	public UserServiceTests(UserTestsFixture fixture)
 	{
 		_sut = new UserService(_userRepository, _logger);
-	}
-
-	private static Faker<User> GetUserGenerator()
-	{
-		return new Faker<User>()
-			.RuleFor(e => e.Id, _ => Guid.NewGuid())
-			.RuleFor(e => e.UserName, (f, e) => f.Internet.UserName(e.FirstName, e.LastName))
-			.RuleFor(e => e.FirstName, f => f.Name.FirstName())
-			.RuleFor(e => e.LastName, f => f.Name.LastName())
-			.RuleFor(e => e.Email, (f, e) => f.Internet.Email(e.FirstName, e.LastName))
-			.RuleFor(e => e.DateOfBirth, f => f.Date.Recent(100))
-			.RuleFor(e => e.DateCreated, f => f.Date.Recent(100));
-	}
-
-	private static Faker<UserDto> GetUserDtoGenerator()
-	{
-		return new Faker<UserDto>()
-			.RuleFor(e => e.id, _ => Guid.NewGuid())
-			.RuleFor(e => e.username, (f, e) => f.Internet.UserName(e.first_name, e.last_name))
-			.RuleFor(e => e.first_name, f => f.Name.FirstName())
-			.RuleFor(e => e.last_name, f => f.Name.LastName())
-			.RuleFor(e => e.email, (f, e) => f.Internet.Email(e.first_name, e.last_name))
-			.RuleFor(e => e.date_of_birth, f => f.Date.Recent(100))
-			.RuleFor(e => e.date_created, f => f.Date.Recent(100));
+		_fixture = fixture;
 	}
 
 	[Fact]
@@ -64,7 +40,7 @@ public class UserServiceTests
 	public async Task GetAllAsync_ShouldReturnUsers_WhenSomeUsersExist()
 	{
 		// Arrange
-		var expected = GetUserDtoGenerator().Generate(1);
+		var expected = _fixture.GetUserDtoGenerator().Generate(1);
 		_userRepository.GetAllAsync().Returns(expected);
 
 		// Act
@@ -110,7 +86,7 @@ public class UserServiceTests
 	public async Task GetByIdAsync_ShouldReturnUser_WhenUserExist()
 	{
 		// Arrange
-		var existingUser = GetUserDtoGenerator().Generate(1).First();
+		var existingUser = _fixture.GetUserDtoGenerator().Generate(1).First();
 		_userRepository.GetAsync(existingUser.id).Returns(existingUser);
 
 		// Act
@@ -124,7 +100,7 @@ public class UserServiceTests
 	public async Task CreateAsync_ShouldCreateUser_WhenDetailsAreValid()
 	{
 		// Arrange
-		var user = GetUserGenerator().Generate(1).First();
+		var user = _fixture.GetUserGenerator().Generate(1).First();
 		var userDto = user.ToUserDto();
 		_userRepository.CreateAsync(Arg.Do<UserDto>(x => userDto = x)).Returns(true);
 
