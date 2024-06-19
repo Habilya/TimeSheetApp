@@ -31,7 +31,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddTransient(typeof(ILoggerAdapter<>), typeof(LoggerAdapter<>));
 
 builder.Services.AddSingleton<IDbConnectionFactory>(_ =>
-	new DbConnectionFactory(config.GetValue<string>("Database:ConnectionString")));
+	new DbConnectionFactory(config.GetValue<string>("Database:ConnectionString")!));
 
 builder.Services.AddSingleton<IUserRepository, UserRepository>();
 builder.Services.AddSingleton<IIndividualMessageRepository, IndividualMessageRepository>();
