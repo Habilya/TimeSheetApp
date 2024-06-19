@@ -1,0 +1,17 @@
+version: '3.9'
+
+services:
+
+  sqlserver:
+    image: "mcr.microsoft.com/mssql/server:2022-latest"
+    restart: always
+    container_name: sql_server2022
+    command: /bin/bash /docker-entrypoint-initdb.d/entrypoint.sh
+    ports:
+      - 1433:1433
+    environment:
+      - ACCEPT_EULA=y
+      - MSSQL_PID=Developer
+      - SA_PASSWORD=VerySecretPassword1234!
+    volumes:
+      - ./Init:/docker-entrypoint-initdb.d
