@@ -18,7 +18,7 @@ public class GlobalExceptionHandler : IExceptionHandler
 		CancellationToken cancellationToken)
 	{
 		var guid = Guid.NewGuid();
-		_logger.LogError(exception, $"[Unhandled Exception] ref.: {guid}");
+		_logger.LogWarning($"[Unhandled Exception] ref.: {guid}");
 
 		httpContext.Response.StatusCode = 500;
 		httpContext.Response.ContentType = "application/json";
