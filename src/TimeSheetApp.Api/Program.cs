@@ -1,4 +1,5 @@
-﻿using TimeSheetApp.Api.Database;
+﻿using Serilog;
+using TimeSheetApp.Api.Database;
 using TimeSheetApp.Api.Infrastructure;
 using TimeSheetApp.Api.Repositories;
 using TimeSheetApp.Api.Services;
@@ -9,13 +10,20 @@ using TimeSheetApp.Library.Providers;
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
 	Args = args,
-	ContentRootPath = Directory.GetCurrentDirectory()
+	ContentRootPath = AppContext.BaseDirectory
 });
 
-var config = builder.Configuration;
-
+Environment.CurrentDirectory = AppContext.BaseDirectory;
 
 // Add services to the container.
+var config = builder.Configuration;
+var logger = new LoggerConfiguration()
+	.ReadFrom.Configuration(config)
+	.Enrich.FromLogContext()
+	.CreateLogger();
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
