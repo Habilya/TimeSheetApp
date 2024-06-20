@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using Microsoft.Net.Http.Headers;
+using Serilog;
 using TimeSheetApp.Api.Database;
 using TimeSheetApp.Api.Infrastructure;
 using TimeSheetApp.Api.Options;
@@ -35,6 +36,16 @@ builder.Services.AddSwaggerGen();
 var dbConnectionOptionsSection = config.GetSection(nameof(DbConnectionOptions));
 builder.Services.Configure<DbConnectionOptions>(dbConnectionOptionsSection);
 builder.Services.AddSingleton<IDbConnectionFactory, DbConnectionFactory>();
+#endregion
+
+#region API Typicode
+builder.Services.AddSingleton<ITypicodeService, TypicodeService>();
+builder.Services.AddHttpClient("TypicodeApi", httpClient =>
+{
+	httpClient.BaseAddress = new Uri(config.GetValue<string>("TypicodeApiConfigurationOptions:ApiBaseUrl")!);
+	httpClient.DefaultRequestHeaders.Add(
+		HeaderNames.Accept, "application/json");
+});
 #endregion
 
 #region Repositories
