@@ -1,19 +1,21 @@
-﻿using System.Data;
+﻿using Microsoft.Extensions.Options;
+using System.Data;
 using System.Data.SqlClient;
+using TimeSheetApp.Api.Options;
 
 namespace TimeSheetApp.Api.Database;
 
 public class DbConnectionFactory : IDbConnectionFactory
 {
-	private readonly string _connectionString;
-	public DbConnectionFactory(string connectionString)
+	private readonly DbConnectionOptions _connectionOptions;
+	public DbConnectionFactory(IOptions<DbConnectionOptions> connectionOptions)
 	{
-		_connectionString = connectionString;
+		_connectionOptions = connectionOptions.Value;
 	}
 
 	public async Task<IDbConnection> CreateConnectionAsync()
 	{
-		var connection = new SqlConnection(_connectionString);
+		var connection = new SqlConnection(_connectionOptions.ConnectionString);
 		await connection.OpenAsync();
 		return connection;
 	}
