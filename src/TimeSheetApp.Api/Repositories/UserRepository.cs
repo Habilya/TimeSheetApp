@@ -23,7 +23,7 @@ public class UserRepository : IUserRepository
 	{
 		using var connection = await _connectionFactory.CreateConnectionAsync();
 		return await connection.QuerySingleOrDefaultAsync<UserDto>(
-			"SELECT * FROM Users WHERE id = @Id LIMIT 1",
+			"SELECT * FROM Users WHERE id = @Id",
 			new { Id = id }
 		);
 	}
