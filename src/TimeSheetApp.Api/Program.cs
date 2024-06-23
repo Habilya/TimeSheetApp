@@ -1,4 +1,6 @@
-﻿using Microsoft.Net.Http.Headers;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.Net.Http.Headers;
 using Serilog;
 using TimeSheetApp.Api.Concerns.IndividualMessages;
 using TimeSheetApp.Api.Concerns.Typicode;
@@ -28,6 +30,9 @@ var logger = new LoggerConfiguration()
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(logger);
 #endregion
+
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
