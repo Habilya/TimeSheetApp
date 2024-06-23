@@ -8,9 +8,12 @@ namespace TimeSheetApp.Api.Concerns.Users;
 public class UserValidator : AbstractValidator<UserCreateRequest>
 {
 	private readonly IDateTimeProvider _dateTimeProvider;
-	public UserValidator(IDateTimeProvider dateTimeProvider)
+	private readonly IUserRepository _userRepository;
+
+	public UserValidator(IDateTimeProvider dateTimeProvider, IUserRepository userRepository)
 	{
 		_dateTimeProvider = dateTimeProvider;
+		_userRepository = userRepository;
 
 		RuleFor(m => m.UserName)
 			.NotEmpty()
