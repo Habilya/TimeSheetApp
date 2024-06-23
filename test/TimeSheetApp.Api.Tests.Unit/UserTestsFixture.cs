@@ -1,7 +1,7 @@
 ﻿using Bogus;
+using TimeSheetApp.Api.Concerns.Users;
 using TimeSheetApp.Api.Contracts.Data;
 using TimeSheetApp.Api.Contracts.Requests;
-using TimeSheetApp.Api.Domain;
 
 namespace TimeSheetApp.Api.Tests.Unit;
 

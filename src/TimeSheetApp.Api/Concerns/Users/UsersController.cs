@@ -1,25 +1,24 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TimeSheetApp.Api.Attributes;
 using TimeSheetApp.Api.Contracts.Requests;
 using TimeSheetApp.Api.Mapping;
-using TimeSheetApp.Api.Services;
 using TimeSheetApp.Library.Providers;
 
-namespace TimeSheetApp.Api.Controllers;
+namespace TimeSheetApp.Api.Concerns.Users;
 
+[Route("users")]
 [ApiController]
-public class UserController : ControllerBase
+public class UsersController : ControllerBase
 {
 	private readonly IUserService _userService;
 	private readonly IDateTimeProvider _dateTimeProvider;
 
-	public UserController(IUserService userService, IDateTimeProvider dateTimeProvider)
+	public UsersController(IUserService userService, IDateTimeProvider dateTimeProvider)
 	{
 		_userService = userService;
 		_dateTimeProvider = dateTimeProvider;
 	}
 
-	[HttpGet("users")]
+	[HttpGet]
 	public async Task<IActionResult> GetAll()
 	{
 		var users = await _userService.GetAllAsync();
@@ -27,7 +26,7 @@ public class UserController : ControllerBase
 		return Ok(usersResponse);
 	}
 
-	[HttpGet("users/{id:guid}")]
+	[HttpGet("{id:guid}")]
 	public async Task<IActionResult> Get([FromRoute] Guid id)
 	{
 		var user = await _userService.GetAsync(id);
@@ -40,7 +39,7 @@ public class UserController : ControllerBase
 		return Ok(userResponse);
 	}
 
-	[HttpPost("users")]
+	[HttpPost]
 	public async Task<IActionResult> Create([FromBody] UserCreateRequest request)
 	{
 		var user = request.ToUser(_dateTimeProvider.DateTimeNow);
@@ -55,16 +54,17 @@ public class UserController : ControllerBase
 		return CreatedAtAction(nameof(Get), new { userResponse.Id }, userResponse);
 	}
 
-	[HttpPut("users/{id:guid}")]
-	public async Task<IActionResult> Update([FromMultipleSource] UserUpdateRequest request)
+	[HttpPut("{id:guid}")]
+	public async Task<IActionResult> Update([FromRoute] Guid id,
+		[FromBody] UserUpdateRequest request)
 	{
-		var existingUser = await _userService.GetAsync(request.Id);
+		var existingUser = await _userService.GetAsync(id);
 		if (existingUser is null)
 		{
 			return NotFound();
 		}
 
-		var user = request.ToUser();
+		var user = request.ToUser(id);
 		var updated = await _userService.UpdateAsync(user);
 		if (!updated)
 		{
@@ -75,7 +75,7 @@ public class UserController : ControllerBase
 		return Ok(userResponse);
 	}
 
-	[HttpDelete("users/{id:guid}")]
+	[HttpDelete("{id:guid}")]
 	public async Task<IActionResult> Delete([FromRoute] Guid id)
 	{
 		var deleted = await _userService.DeleteAsync(id);

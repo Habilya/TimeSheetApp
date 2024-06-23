@@ -1,8 +1,6 @@
-﻿using TimeSheetApp.Api.Domain;
-using TimeSheetApp.Api.Mapping;
-using TimeSheetApp.Api.Repositories;
+﻿using TimeSheetApp.Api.Mapping;
 
-namespace TimeSheetApp.Api.Services;
+namespace TimeSheetApp.Api.Concerns.IndividualMessages;
 
 public class IndividualMessageService : IIndividualMessageService
 {

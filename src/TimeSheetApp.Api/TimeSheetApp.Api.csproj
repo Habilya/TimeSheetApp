@@ -8,6 +8,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Providers\**" />
+	  <Content Remove="Providers\**" />
+	  <EmbeddedResource Remove="Providers\**" />
+	  <None Remove="Providers\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Dapper" Version="2.1.35" />
 		<PackageReference Include="Dapper.SqlBuilder" Version="2.0.78" />
 		<PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
@@ -19,10 +26,6 @@
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
 		<PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
 		<PackageReference Include="ValueOf" Version="2.0.31" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="Providers\" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -1,6 +1,4 @@
-﻿using TimeSheetApp.Api.Typicode.Responses;
-
-namespace TimeSheetApp.Api.Services;
+﻿namespace TimeSheetApp.Api.Concerns.Typicode;
 
 public class TypicodeService : ITypicodeService
 {
@@ -13,10 +11,10 @@ public class TypicodeService : ITypicodeService
 		_httpClient = _httpClientFactory.CreateClient("TypicodeApi");
 	}
 
-	public async Task<IEnumerable<User>> GetAllUsersAsync()
+	public async Task<IEnumerable<Responses.User>> GetAllUsersAsync()
 	{
 		var response = await _httpClient.GetAsync("/users");
-		var responseBody = await response.Content.ReadFromJsonAsync<IEnumerable<User>>();
-		return responseBody ?? new List<User>();
+		var responseBody = await response.Content.ReadFromJsonAsync<IEnumerable<Responses.User>>();
+		return responseBody ?? new List<Responses.User>();
 	}
 }

@@ -2,10 +2,9 @@
 using NSubstitute;
 using NSubstitute.ExceptionExtensions;
 using NSubstitute.ReturnsExtensions;
+using TimeSheetApp.Api.Concerns.Users;
 using TimeSheetApp.Api.Contracts.Data;
 using TimeSheetApp.Api.Mapping;
-using TimeSheetApp.Api.Repositories;
-using TimeSheetApp.Api.Services;
 using TimeSheetApp.Library.Logging;
 
 namespace TimeSheetApp.Api.Tests.Unit;

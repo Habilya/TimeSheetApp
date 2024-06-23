@@ -1,11 +1,9 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
-using TimeSheetApp.Api.Domain;
 using TimeSheetApp.Api.Mapping;
-using TimeSheetApp.Api.Repositories;
 using TimeSheetApp.Library.Logging;
 
-namespace TimeSheetApp.Api.Services;
+namespace TimeSheetApp.Api.Concerns.Users;
 
 public class UserService : IUserService
 {

@@ -1,4 +1,4 @@
-﻿namespace TimeSheetApp.Api.Typicode.Responses;
+﻿namespace TimeSheetApp.Api.Concerns.Typicode.Responses;
 
 public class Geo
 {

@@ -1,10 +1,11 @@
 ﻿using Microsoft.Net.Http.Headers;
 using Serilog;
+using TimeSheetApp.Api.Concerns.IndividualMessages;
+using TimeSheetApp.Api.Concerns.Typicode;
+using TimeSheetApp.Api.Concerns.Users;
 using TimeSheetApp.Api.Database;
 using TimeSheetApp.Api.Infrastructure;
 using TimeSheetApp.Api.Options;
-using TimeSheetApp.Api.Repositories;
-using TimeSheetApp.Api.Services;
 using TimeSheetApp.Library.Logging;
 using TimeSheetApp.Library.Providers;
 

@@ -1,6 +1,6 @@
 ﻿using TimeSheetApp.Api.Contracts.Data;
 
-namespace TimeSheetApp.Api.Repositories;
+namespace TimeSheetApp.Api.Concerns.Users;
 
 public interface IUserRepository
 {

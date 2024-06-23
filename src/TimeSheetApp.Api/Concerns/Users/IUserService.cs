@@ -1,6 +1,4 @@
-﻿using TimeSheetApp.Api.Domain;
-
-namespace TimeSheetApp.Api.Services;
+﻿namespace TimeSheetApp.Api.Concerns.Users;
 
 public interface IUserService
 {

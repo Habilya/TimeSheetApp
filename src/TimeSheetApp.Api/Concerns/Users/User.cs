@@ -1,4 +1,4 @@
-﻿namespace TimeSheetApp.Api.Domain;
+﻿namespace TimeSheetApp.Api.Concerns.Users;
 
 public class User
 {

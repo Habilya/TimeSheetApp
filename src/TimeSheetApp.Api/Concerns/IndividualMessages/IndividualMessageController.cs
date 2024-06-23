@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TimeSheetApp.Api.Contracts.Requests;
 using TimeSheetApp.Api.Mapping;
-using TimeSheetApp.Api.Services;
 
-namespace TimeSheetApp.Api.Controllers;
+namespace TimeSheetApp.Api.Concerns.IndividualMessages;
 
+[Route("individualmessages")]
 [ApiController]
 public class IndividualMessageController : ControllerBase
 {
@@ -16,7 +16,7 @@ public class IndividualMessageController : ControllerBase
 	}
 
 
-	[HttpGet("individualmessages")]
+	[HttpGet]
 	public async Task<IActionResult> GetAll()
 	{
 		var individualMessages = await _individualMessageService.GetAllAsync();
@@ -24,7 +24,7 @@ public class IndividualMessageController : ControllerBase
 		return Ok(response);
 	}
 
-	[HttpPost("individualmessages/search")]
+	[HttpPost("search")]
 	public async Task<IActionResult> Search([FromBody] IndividualMessageSearchRequest request)
 	{
 		var individualMessages = await _individualMessageService.SearchAsync(request.SearchString, request.FromDate, request.ToDate);

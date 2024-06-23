@@ -2,7 +2,7 @@
 using TimeSheetApp.Api.Contracts.Data;
 using TimeSheetApp.Api.Database;
 
-namespace TimeSheetApp.Api.Repositories;
+namespace TimeSheetApp.Api.Concerns.Users;
 
 public class UserRepository : IUserRepository
 {
@@ -59,7 +59,7 @@ public class UserRepository : IUserRepository
 	{
 		using var connection = await _connectionFactory.CreateConnectionAsync();
 		var result = await connection.ExecuteAsync(
-			@"DELETE FROM Users WHERE id = @Id",
+			"DELETE FROM Users WHERE id = @Id",
 			new { Id = id }
 		);
 		return result > 0;

@@ -1,9 +1,9 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
-using TimeSheetApp.Api.Services;
 
-namespace TimeSheetApp.Api.Controllers;
+namespace TimeSheetApp.Api.Concerns.Typicode;
 
+[Route("typicode")]
 [ApiController]
 public class TypicodeController : ControllerBase
 {
@@ -14,7 +14,7 @@ public class TypicodeController : ControllerBase
 		_typicodeService = typicodeService;
 	}
 
-	[HttpGet("typicode/users")]
+	[HttpGet("users")]
 	public async Task<IActionResult> GetAll()
 	{
 		var users = await _typicodeService.GetAllUsersAsync();

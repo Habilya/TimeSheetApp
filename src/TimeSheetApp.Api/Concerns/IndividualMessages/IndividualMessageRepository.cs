@@ -2,7 +2,7 @@
 using TimeSheetApp.Api.Contracts.Data;
 using TimeSheetApp.Api.Database;
 
-namespace TimeSheetApp.Api.Repositories;
+namespace TimeSheetApp.Api.Concerns.IndividualMessages;
 
 public class IndividualMessageRepository : IIndividualMessageRepository
 {

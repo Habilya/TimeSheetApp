@@ -3,19 +3,17 @@ using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using System.Globalization;
+using TimeSheetApp.Api.Concerns.Users;
 using TimeSheetApp.Api.Contracts.Requests;
 using TimeSheetApp.Api.Contracts.Response;
-using TimeSheetApp.Api.Controllers;
-using TimeSheetApp.Api.Domain;
 using TimeSheetApp.Api.Mapping;
-using TimeSheetApp.Api.Services;
 using TimeSheetApp.Library.Providers;
 
 namespace TimeSheetApp.Api.Tests.Unit;
 
 public class UserControllerTests : IClassFixture<UserTestsFixture>
 {
-	private readonly UserController _sut;
+	private readonly UsersController _sut;
 	private readonly UserTestsFixture _fixture;
 	private readonly IUserService _userService = Substitute.For<IUserService>();
 	private readonly IDateTimeProvider _dateTimeProvider = Substitute.For<IDateTimeProvider>();
@@ -23,7 +21,7 @@ public class UserControllerTests : IClassFixture<UserTestsFixture>
 
 	public UserControllerTests(UserTestsFixture fixture)
 	{
-		_sut = new UserController(_userService, _dateTimeProvider);
+		_sut = new UsersController(_userService, _dateTimeProvider);
 		_fixture = fixture;
 	}
 

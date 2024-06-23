@@ -1,5 +1,5 @@
-﻿using TimeSheetApp.Api.Contracts.Data;
-using TimeSheetApp.Api.Domain;
+﻿using TimeSheetApp.Api.Concerns.Users;
+using TimeSheetApp.Api.Contracts.Data;
 
 namespace TimeSheetApp.Api.Mapping;
 
