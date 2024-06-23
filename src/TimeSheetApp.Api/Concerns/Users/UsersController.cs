@@ -27,7 +27,7 @@ public class UsersController : ControllerBase
 	}
 
 	[HttpGet("{id:guid}")]
-	public async Task<IActionResult> Get([FromRoute] Guid id)
+	public async Task<IActionResult> Get(Guid id)
 	{
 		var user = await _userService.GetAsync(id);
 		if (user is null)
@@ -40,7 +40,7 @@ public class UsersController : ControllerBase
 	}
 
 	[HttpPost]
-	public async Task<IActionResult> Create([FromBody] UserCreateRequest request)
+	public async Task<IActionResult> Create(UserCreateRequest request)
 	{
 		var user = request.ToUser(_dateTimeProvider.DateTimeNow);
 
@@ -76,7 +76,7 @@ public class UsersController : ControllerBase
 	}
 
 	[HttpDelete("{id:guid}")]
-	public async Task<IActionResult> Delete([FromRoute] Guid id)
+	public async Task<IActionResult> Delete(Guid id)
 	{
 		var deleted = await _userService.DeleteAsync(id);
 		if (!deleted)

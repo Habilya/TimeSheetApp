@@ -25,7 +25,7 @@ public class IndividualMessageController : ControllerBase
 	}
 
 	[HttpPost("search")]
-	public async Task<IActionResult> Search([FromBody] IndividualMessageSearchRequest request)
+	public async Task<IActionResult> Search(IndividualMessageSearchRequest request)
 	{
 		var individualMessages = await _individualMessageService.SearchAsync(request.SearchString, request.FromDate, request.ToDate);
 		if (!individualMessages.Any())
