@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using TimeSheetApp.Library.Logging;
 using TimeSheetApp.Library.Providers;
 
@@ -21,17 +23,22 @@ public class GlobalExceptionHandler : IExceptionHandler
 		CancellationToken cancellationToken)
 	{
 		var guid = _guidProvider.NewGuid();
-		_logger.LogWarning($"[Unhandled Exception] ref.: {guid}");
+		_logger.LogWarning("[Unhandled Exception] ref.: {guid}", guid);
 
-		httpContext.Response.StatusCode = 500;
-		httpContext.Response.ContentType = "application/json";
-
-		await httpContext.Response.WriteAsJsonAsync(new
+		var problemDetailsExtensions = new Dictionary<string, object?>()
 		{
-			StatusCode = httpContext.Response.StatusCode,
+			{ "ref.", guid }
+		};
+
+		var problemDetails = new ProblemDetails
+		{
+			Type = "https://datatracker.ietf.org/doc/html/rfc9110#section-15.6.1",
 			Title = "Internal Server Error",
-			Message = $"ref.: {guid}"
-		});
+			Status = (int)HttpStatusCode.InternalServerError,
+			Extensions = problemDetailsExtensions
+		};
+
+		await httpContext.Response.WriteAsJsonAsync(problemDetails);
 
 		return true;
 	}
