@@ -30,3 +30,5 @@ Ex.: Concerns/User**s** while the object inside must be `User.cs`, __to avoid Na
 - 🔲 React Frontend
 - 🔲 Frontend with docker
 - 🔲 Integration tests
+- 🔲 Use Refit to calls other apis
+- 🔲 Health check route returning App version build number and workstation information
