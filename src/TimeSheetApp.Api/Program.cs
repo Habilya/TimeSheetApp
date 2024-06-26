@@ -6,7 +6,6 @@ using TimeSheetApp.Api.Concerns.IndividualMessages;
 using TimeSheetApp.Api.Concerns.Typicode;
 using TimeSheetApp.Api.Concerns.Users;
 using TimeSheetApp.Api.Database;
-using TimeSheetApp.Api.Infrastructure;
 using TimeSheetApp.Api.Options;
 using TimeSheetApp.Library.Logging;
 using TimeSheetApp.Library.Providers;
@@ -32,8 +31,7 @@ builder.Logging.AddSerilog(logger);
 #endregion
 
 builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddValidatorsFromAssemblyContaining<Program>();
-
+builder.Services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Singleton);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -70,11 +68,6 @@ builder.Services.AddSingleton<IGuidProvider, GuidProvider>();
 builder.Services.AddTransient(typeof(ILoggerAdapter<>), typeof(LoggerAdapter<>));
 #endregion
 
-#region Global Exception Handling
-builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-builder.Services.AddProblemDetails();
-#endregion
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -84,7 +77,7 @@ if (app.Environment.IsDevelopment())
 	app.UseSwaggerUI();
 }
 
-app.UseExceptionHandler();
+app.UseExceptionHandler("/error");
 
 app.UseHttpsRedirection();
 
