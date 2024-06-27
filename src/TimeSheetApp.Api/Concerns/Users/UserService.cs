@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+﻿using ErrorOr;
 using FluentValidation.Results;
 using TimeSheetApp.Api.Mapping;
 using TimeSheetApp.Library.Logging;
@@ -37,18 +37,24 @@ public class UserService : IUserService
 		}
 	}
 
-	public async Task<bool> CreateAsync(User user)
+	public async Task<ErrorOr<User>> CreateAsync(User user)
 	{
 		var existingUser = await _userRepository.GetAsync(user.Id);
 		if (existingUser is not null)
 		{
-			var message = $"A user with id {user.Id} already exists";
-			throw new ValidationException(message, GenerateValidationError(nameof(User), message));
+			return Errors.User.UserIdAlreadyExists(user.Id);
 		}
-		// Move it to a different location
-		//user.DateCreated = _dateTimeProvider.DateTimeNow;
+
+		var existingUserName = await _userRepository.GetByUsernameAsync(user.UserName);
+		if (existingUserName is not null)
+		{
+			return Errors.User.UserNameAlreadyExists(user.UserName);
+		}
+
 		var userDto = user.ToUserDto();
-		return await _userRepository.CreateAsync(userDto);
+		await _userRepository.CreateAsync(userDto);
+
+		return user;
 	}
 
 	public async Task<bool> UpdateAsync(User user)

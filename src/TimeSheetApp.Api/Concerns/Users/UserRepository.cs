@@ -28,6 +28,15 @@ public class UserRepository : IUserRepository
 		);
 	}
 
+	public async Task<UserDto?> GetByUsernameAsync(string username)
+	{
+		using var connection = await _connectionFactory.CreateConnectionAsync();
+		return await connection.QuerySingleOrDefaultAsync<UserDto>(
+			"SELECT * FROM Users WHERE username = @Username",
+			new { Username = username }
+		);
+	}
+
 	public async Task<bool> CreateAsync(UserDto user)
 	{
 		using var connection = await _connectionFactory.CreateConnectionAsync();

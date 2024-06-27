@@ -1,7 +1,10 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Net.Http.Headers;
 using Serilog;
+using TimeSheetApp.Api;
+using TimeSheetApp.Api.Concerns.Errors;
 using TimeSheetApp.Api.Concerns.IndividualMessages;
 using TimeSheetApp.Api.Concerns.Typicode;
 using TimeSheetApp.Api.Concerns.Users;
@@ -31,10 +34,12 @@ builder.Logging.AddSerilog(logger);
 #endregion
 
 builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddValidatorsFromAssemblyContaining<Program>(ServiceLifetime.Singleton);
+builder.Services.AddValidatorsFromAssemblyContaining<IApiMarker>(ServiceLifetime.Singleton);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddSingleton<ProblemDetailsFactory, TimeSheetAPIProblemDetailsFactory>();
 
 #region DB Configuration
 var dbConnectionOptionsSection = config.GetSection(nameof(DbConnectionOptions));

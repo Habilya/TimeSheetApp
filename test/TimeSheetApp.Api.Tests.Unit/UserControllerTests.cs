@@ -1,8 +1,12 @@
 ﻿using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using System.Globalization;
+using TimeSheetApp.Api.Concerns.Errors;
 using TimeSheetApp.Api.Concerns.Users;
 using TimeSheetApp.Api.Contracts.Requests;
 using TimeSheetApp.Api.Contracts.Response;
@@ -18,10 +22,19 @@ public class UserControllerTests : IClassFixture<UserTestsFixture>
 	private readonly IUserService _userService = Substitute.For<IUserService>();
 	private readonly IDateTimeProvider _dateTimeProvider = Substitute.For<IDateTimeProvider>();
 
+	private readonly HttpContext _httpContext = Substitute.For<HttpContext>();
+
 
 	public UserControllerTests(UserTestsFixture fixture)
 	{
+		var services = new ServiceCollection();
+		services.AddSingleton<ProblemDetailsFactory, TimeSheetAPIProblemDetailsFactory>();
+
 		_sut = new UsersController(_userService, _dateTimeProvider);
+		_sut.ControllerContext = new ControllerContext
+		{
+			HttpContext = _httpContext
+		};
 		_fixture = fixture;
 	}
 
@@ -102,7 +115,7 @@ public class UserControllerTests : IClassFixture<UserTestsFixture>
 			DateOfBirth = user.DateOfBirth,
 			DateCreated = DateTime.ParseExact("2020-01-01_20:00:00", "yyyy-MM-dd_HH:mm:ss", CultureInfo.InvariantCulture)
 		};
-		_userService.CreateAsync(Arg.Do<User>(x => createdUser = x)).Returns(true);
+		_userService.CreateAsync(Arg.Do<User>(x => createdUser = x)).Returns(createdUser);
 
 
 		// Act
@@ -119,10 +132,11 @@ public class UserControllerTests : IClassFixture<UserTestsFixture>
 	public async Task Create_ShouldReturnBadRequest_WhenCreateUserRequestIsInvalid()
 	{
 		// Arrange
-		_userService.CreateAsync(Arg.Any<User>()).Returns(false);
+		var guid = Guid.NewGuid();
+		_userService.CreateAsync(Arg.Any<User>()).Returns(Errors.User.UserIdAlreadyExists(guid));
 
 		// Act
-		var result = (BadRequestResult)await _sut.Create(new UserCreateRequest());
+		var result = (ObjectResult)await _sut.Create(new UserCreateRequest());
 
 		// Assert
 		result.StatusCode.Should().Be(400);

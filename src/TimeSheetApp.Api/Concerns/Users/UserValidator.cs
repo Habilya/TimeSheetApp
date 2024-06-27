@@ -1,20 +1,13 @@
 ﻿using FluentValidation;
 using System.Text.RegularExpressions;
 using TimeSheetApp.Api.Contracts.Requests;
-using TimeSheetApp.Library.Providers;
 
 namespace TimeSheetApp.Api.Concerns.Users;
 
-public class UserValidator : AbstractValidator<UserCreateRequest>
+public class UserBaseValidator<T> : AbstractValidator<T> where T : UserBaseRequest
 {
-	private readonly IDateTimeProvider _dateTimeProvider;
-	private readonly IUserRepository _userRepository;
-
-	public UserValidator(IDateTimeProvider dateTimeProvider, IUserRepository userRepository)
+	public UserBaseValidator()
 	{
-		_dateTimeProvider = dateTimeProvider;
-		_userRepository = userRepository;
-
 		RuleFor(m => m.UserName)
 			.NotEmpty()
 			.IsValidUserName();
@@ -32,21 +25,22 @@ public class UserValidator : AbstractValidator<UserCreateRequest>
 		RuleFor(m => m.Email)
 			.NotEmpty()
 			.IsValidEmail();
+
+		RuleFor(m => m.DateOfBirth)
+			.NotEmpty();
 	}
 }
 
-/*
- var existingUser = await _userRepository.GetAsync(user.Id);
-		if (existingUser is not null)
-		{
-			var message = $"A user with id {user.Id} already exists";
-			throw new ValidationException(message, GenerateValidationError(nameof(User), message));
-		}
- 
- */
+public class UserCreateValidator : UserBaseValidator<UserCreateRequest> { }
 
-
-// For validation I need to validate against current date need to inject IDateTimeProvider
+public class UserUpdateValidator : UserBaseValidator<UserUpdateRequest>
+{
+	public UserUpdateValidator()
+	{
+		RuleFor(m => m.DateCreated)
+			.NotEmpty();
+	}
+}
 
 
 public static class UserNameValidator

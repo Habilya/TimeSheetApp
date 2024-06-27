@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TimeSheetApp.Api.Concerns.Base;
 using TimeSheetApp.Api.Contracts.Requests;
 using TimeSheetApp.Api.Mapping;
 using TimeSheetApp.Library.Providers;
@@ -6,8 +7,7 @@ using TimeSheetApp.Library.Providers;
 namespace TimeSheetApp.Api.Concerns.Users;
 
 [Route("users")]
-[ApiController]
-public class UsersController : ControllerBase
+public class UsersController : ApiController
 {
 	private readonly IUserService _userService;
 	private readonly IDateTimeProvider _dateTimeProvider;
@@ -45,13 +45,15 @@ public class UsersController : ControllerBase
 		var user = request.ToUser(_dateTimeProvider.DateTimeNow);
 
 		var created = await _userService.CreateAsync(user);
-		if (!created)
-		{
-			return BadRequest();
-		}
 
-		var userResponse = user.ToUserResponse();
-		return CreatedAtAction(nameof(Get), new { userResponse.Id }, userResponse);
+		return created.Match(
+			result =>
+			{
+				var userResponse = user.ToUserResponse();
+				return CreatedAtAction(nameof(Get), new { userResponse.Id }, userResponse);
+			},
+			errors => Problem(errors)
+		);
 	}
 
 	[HttpPut("{id:guid}")]

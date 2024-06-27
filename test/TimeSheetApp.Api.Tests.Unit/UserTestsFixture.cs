@@ -13,7 +13,6 @@ public class UserTestsFixture : IDisposable
 		// Ususally setup code goes here
 	}
 
-
 	public Faker<User> GetUserGenerator()
 	{
 		return new Faker<User>()

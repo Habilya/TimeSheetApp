@@ -107,7 +107,7 @@ public class UserServiceTests : IClassFixture<UserTestsFixture>
 		var result = await _sut.CreateAsync(user);
 
 		// Assert
-		result.Should().BeTrue();
+		result.Value.Should().BeEquivalentTo(user);
 	}
 
 	[Fact]

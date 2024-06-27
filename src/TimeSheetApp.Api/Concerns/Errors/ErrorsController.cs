@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TimeSheetApp.Api.Concerns.Base;
 using TimeSheetApp.Library.Logging;
 using TimeSheetApp.Library.Providers;
 
 namespace TimeSheetApp.Api.Concerns.Errors;
 
-[ApiController]
-public class ErrorsController : ControllerBase
+public class ErrorsController : ApiController
 {
 	private readonly ILoggerAdapter<ErrorsController> _logger;
 	private readonly IGuidProvider _guidProvider;

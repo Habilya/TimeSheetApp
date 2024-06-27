@@ -1,11 +1,12 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
+using TimeSheetApp.Api.Concerns.Base;
 
 namespace TimeSheetApp.Api.Concerns.Typicode;
 
 [Route("typicode")]
 [ApiController]
-public class TypicodeController : ControllerBase
+public class TypicodeController : ApiController
 {
 	private readonly ITypicodeService _typicodeService;
 

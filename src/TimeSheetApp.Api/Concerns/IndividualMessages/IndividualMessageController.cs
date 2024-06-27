@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TimeSheetApp.Api.Concerns.Base;
 using TimeSheetApp.Api.Contracts.Requests;
 using TimeSheetApp.Api.Mapping;
 
 namespace TimeSheetApp.Api.Concerns.IndividualMessages;
 
 [Route("individualmessages")]
-[ApiController]
-public class IndividualMessageController : ControllerBase
+public class IndividualMessageController : ApiController
 {
 	private readonly IIndividualMessageService _individualMessageService;
 
