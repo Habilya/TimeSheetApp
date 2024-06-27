@@ -52,13 +52,13 @@ builder.Services.AddHttpClient("TypicodeApi", httpClient =>
 });
 #endregion
 
-#region Repositories
+#region User
 builder.Services.AddSingleton<IUserRepository, UserRepository>();
-builder.Services.AddSingleton<IIndividualMessageRepository, IndividualMessageRepository>();
+builder.Services.AddSingleton<IUserService, UserService>();
 #endregion
 
-#region Services
-builder.Services.AddSingleton<IUserService, UserService>();
+#region IndividualMessage
+builder.Services.AddSingleton<IIndividualMessageRepository, IndividualMessageRepository>();
 builder.Services.AddSingleton<IIndividualMessageService, IndividualMessageService>();
 #endregion
 
