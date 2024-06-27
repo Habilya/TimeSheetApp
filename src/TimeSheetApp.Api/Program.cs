@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Net.Http.Headers;
 using Serilog;
@@ -9,6 +11,7 @@ using TimeSheetApp.Api.Concerns.IndividualMessages;
 using TimeSheetApp.Api.Concerns.Typicode;
 using TimeSheetApp.Api.Concerns.Users;
 using TimeSheetApp.Api.Database;
+using TimeSheetApp.Api.Health;
 using TimeSheetApp.Api.Options;
 using TimeSheetApp.Library.Logging;
 using TimeSheetApp.Library.Providers;
@@ -32,6 +35,10 @@ var logger = new LoggerConfiguration()
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(logger);
 #endregion
+
+builder.Services.AddHealthChecks()
+	.AddCheck<DatabaseHealthCheck>("Database")
+	.AddCheck<TypicodeAPIHealthCheck>("TypicodeAPI");
 
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<IApiMarker>(ServiceLifetime.Singleton);
@@ -85,6 +92,11 @@ if (app.Environment.IsDevelopment())
 app.UseExceptionHandler("/error");
 
 app.UseHttpsRedirection();
+
+app.MapHealthChecks("/_health", new HealthCheckOptions
+{
+	ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+})/*.RequireAuthorization()*/;
 
 app.UseAuthorization();
 
