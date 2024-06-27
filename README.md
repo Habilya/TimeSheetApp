@@ -73,8 +73,37 @@ For custom error that is UserName duplicate
   }
 }
 ```
-
 this is a work in progress with validations
+
+## Healthcheck
+
+There is a route `/_health`
+that can be used for healthchecks (Probably needs the authorisation when JWT is implemented)
+example of response
+```
+{
+    "status": "Unhealthy",
+    "totalDuration": "00:00:16.2908161",
+    "entries": {
+        "Database": {
+            "data": {},
+            "description": "A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: TCP Provider, error: 0 - No connection could be made because the target machine actively refused it.)",
+            "duration": "00:00:16.2685633",
+            "exception": "A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: TCP Provider, error: 0 - No connection could be made because the target machine actively refused it.)",
+            "status": "Unhealthy",
+            "tags": []
+        },
+        "TypicodeAPI": {
+            "data": {},
+            "duration": "00:00:00.1681199",
+            "status": "Healthy",
+            "tags": []
+        }
+    }
+}
+```
+
+## Development
 
 #### How to build the project
 
