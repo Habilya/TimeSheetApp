@@ -1,4 +1,6 @@
 ﻿using FluentAssertions;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -28,7 +30,12 @@ public class UserControllerTests : IClassFixture<UserTestsFixture>
 	public UserControllerTests(UserTestsFixture fixture)
 	{
 		var services = new ServiceCollection();
+		services.AddMvc();
+		services.AddProblemDetails();
+		services.AddFluentValidationAutoValidation();
+		services.AddValidatorsFromAssemblyContaining<IApiMarker>(ServiceLifetime.Singleton);
 		services.AddSingleton<ProblemDetailsFactory, TimeSheetAPIProblemDetailsFactory>();
+		services.BuildServiceProvider();
 
 		_sut = new UsersController(_userService, _dateTimeProvider);
 		_sut.ControllerContext = new ControllerContext
