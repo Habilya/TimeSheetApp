@@ -17,19 +17,24 @@ public class InfoController : ApiController
 	[Route("info")]
 	public IActionResult GetInfo()
 	{
-		var version = typeof(IApiMarker).Assembly.GetName().Version?.ToString();
-		var buildNumber = Environment.GetEnvironmentVariable("BUILD_NUMBER");
-		var workstation = Environment.MachineName;
-		var serverDateTime = _dateTimeProvider.DateTimeNow;
-
-		var info = new
+		var hostInfo = new
 		{
-			Version = version,
-			BuildNumber = buildNumber,
-			Workstation = workstation,
-			ServerDateTime = serverDateTime
+			hostName = Environment.MachineName,
+			path = AppContext.BaseDirectory,
+			upSince = System.Diagnostics.Process.GetCurrentProcess().StartTime,
+			upTimeMinutes = (int)_dateTimeProvider.DateTimeNow.Subtract(System.Diagnostics.Process.GetCurrentProcess().StartTime).TotalMinutes,
+			processorCount = Environment.ProcessorCount,
+			memoryUsed = GC.GetTotalMemory(false),
+			processorTimeUsedSecs = (int)_dateTimeProvider.DateTimeNow.Subtract(System.Diagnostics.Process.GetCurrentProcess().StartTime).TotalSeconds,
+			serverDateTime = _dateTimeProvider.DateTimeNow
 		};
 
-		return Ok(info);
+		var applicationInfo = new
+		{
+			version = typeof(IApiMarker).Assembly.GetName().Version?.ToString(),
+			buildNumber = Environment.GetEnvironmentVariable("BUILD_NUMBER")
+		};
+
+		return Ok(new { applicationInfo, hostInfo });
 	}
 }

@@ -103,6 +103,29 @@ example of response
 }
 ```
 
+## Info route
+There is a route `/info`
+that can be used to get all the relevant information on the app and the host (Probably needs the authorisation when JWT is implemented)
+example of response
+```
+{
+  "applicationInfo": {
+    "version": "1.0.0.0",
+    "buildNumber": null
+  },
+  "hostInfo": {
+    "hostName": "computer",
+    "path": "C:\\GIT_REPOS\\TimeSheetApp\\src\\TimeSheetApp.Api\\bin\\Debug\\net8.0\\",
+    "upSince": "2024-06-28T10:41:40.5314824-04:00",
+    "upTimeMinutes": 0,
+    "processorCount": 8,
+    "memoryUsed": 7213944,
+    "processorTimeUsedSecs": 11,
+    "serverDateTime": "2024-06-28T10:41:51.6390899-04:00"
+  }
+}
+```
+
 ## Development
 
 #### How to build the project
@@ -129,7 +152,6 @@ Ex.: Concerns/User**s** while the object inside must be `User.cs`, __to avoid Na
 - ✅ Usage of a 3d Party API `(Typicode https://jsonplaceholder.typicode.com/)`
 - ✅ Vertical Sliced Concerns
 - 🔲 Validations
-- 🔲 MediatR
 - 🔲 JWT authentication
 - 🔲 React Frontend
 - 🔲 Frontend with docker
