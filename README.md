@@ -151,10 +151,10 @@ Ex.: Concerns/User**s** while the object inside must be `User.cs`, __to avoid Na
 - ✅ GlobalExceptionHandler
 - ✅ Usage of a 3d Party API `(Typicode https://jsonplaceholder.typicode.com/)`
 - ✅ Vertical Sliced Concerns
-- 🔲 Validations
-- 🔲 JWT authentication
+- ✅ Health check route returning App version build number and workstation information
+- ✅ Validations
 - 🔲 React Frontend
 - 🔲 Frontend with docker
 - 🔲 Integration tests
-- 🔲 Use Refit to calls other apis
-- 🔲 Health check route returning App version build number and workstation information
+- 🔲 Use Refit to calls other apis?
+- 🔲 Authentication & Authorization
