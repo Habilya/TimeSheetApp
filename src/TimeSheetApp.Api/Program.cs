@@ -2,11 +2,9 @@
 using FluentValidation.AspNetCore;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Net.Http.Headers;
 using Serilog;
 using TimeSheetApp.Api;
-using TimeSheetApp.Api.Concerns.Errors;
 using TimeSheetApp.Api.Concerns.IndividualMessages;
 using TimeSheetApp.Api.Concerns.Typicode;
 using TimeSheetApp.Api.Concerns.Users;
@@ -45,8 +43,7 @@ builder.Services.AddValidatorsFromAssemblyContaining<IApiMarker>(ServiceLifetime
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-builder.Services.AddSingleton<ProblemDetailsFactory, TimeSheetAPIProblemDetailsFactory>();
+builder.Services.AddProblemDetails();
 
 #region DB Configuration
 var dbConnectionOptionsSection = config.GetSection(nameof(DbConnectionOptions));

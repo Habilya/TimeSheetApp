@@ -3,12 +3,10 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 using NSubstitute;
 using NSubstitute.ReturnsExtensions;
 using System.Globalization;
-using TimeSheetApp.Api.Concerns.Errors;
 using TimeSheetApp.Api.Concerns.Users;
 using TimeSheetApp.Api.Contracts.Requests;
 using TimeSheetApp.Api.Contracts.Response;
@@ -24,27 +22,75 @@ public class UserControllerTests : IClassFixture<UserTestsFixture>
 	private readonly IUserService _userService = Substitute.For<IUserService>();
 	private readonly IDateTimeProvider _dateTimeProvider = Substitute.For<IDateTimeProvider>();
 
-	private readonly HttpContext _httpContext = Substitute.For<HttpContext>();
-
 
 	public UserControllerTests(UserTestsFixture fixture)
 	{
 		var services = new ServiceCollection();
-		services.AddMvc();
-		services.AddProblemDetails();
+		services.AddControllers();
 		services.AddFluentValidationAutoValidation();
 		services.AddValidatorsFromAssemblyContaining<IApiMarker>(ServiceLifetime.Singleton);
-		services.AddSingleton<ProblemDetailsFactory, TimeSheetAPIProblemDetailsFactory>();
-		services.BuildServiceProvider();
+		services.AddProblemDetails();
+		services.AddMvc().AddApplicationPart(typeof(UsersController).Assembly);
+		services.AddTransient<UsersController>();
+		services.AddSingleton(_userService);
+		services.AddSingleton(_dateTimeProvider);
 
-		_sut = new UsersController(_userService, _dateTimeProvider);
+		var serviceProvider = services.BuildServiceProvider();
+
+		_sut = ActivatorUtilities.CreateInstance<UsersController>(serviceProvider, _userService, _dateTimeProvider);
+		var httpContext = new DefaultHttpContext();
 		_sut.ControllerContext = new ControllerContext
 		{
-			HttpContext = _httpContext
+			HttpContext = httpContext
 		};
 		_fixture = fixture;
 	}
 
+	[Fact]
+	public async Task Create_ShouldReturnBadRequest_WhenCreateUserRequestIsInvalid()
+	{
+		// Arrange
+		var guid = Guid.NewGuid();
+		_userService.CreateAsync(Arg.Any<User>()).Returns(Errors.User.UserIdAlreadyExists(guid));
+
+		// Act
+		var result = (ObjectResult)await _sut.Create(new UserCreateRequest());
+
+		// Assert
+		result.StatusCode.Should().Be(400);
+	}
+
+	[Fact]
+	public async Task Create_ShouldCreateUser_WhenCreateUserRequestIsValid()
+	{
+		// Arrange
+		var expectedCreatedDate = new DateTime(2020, 1, 1, 20, 0, 0);
+		_dateTimeProvider.DateTimeNow.Returns(expectedCreatedDate);
+
+		var user = _fixture.GetUserCreateRequestGenerator().Generate(1).First();
+
+		var createdUser = new User
+		{
+			Id = Guid.NewGuid(),
+			UserName = user.UserName,
+			FirstName = user.FirstName,
+			LastName = user.LastName,
+			Email = user.Email,
+			DateOfBirth = user.DateOfBirth,
+			DateCreated = DateTime.ParseExact("2020-01-01_20:00:00", "yyyy-MM-dd_HH:mm:ss", CultureInfo.InvariantCulture)
+		};
+		_userService.CreateAsync(Arg.Do<User>(x => createdUser = x)).Returns(createdUser);
+
+
+		// Act
+		var result = (CreatedAtActionResult)await _sut.Create(user);
+		var userResponse = createdUser.ToUserResponse();
+
+		// Assert
+		result.StatusCode.Should().Be(201);
+		result.Value.As<UserResponse>().Should().BeEquivalentTo(userResponse);
+		result.RouteValues!["id"].Should().Be(userResponse.Id);
+	}
 
 	[Fact]
 	public async Task GetById_ReturnOkAndObject_WhenUserExists()
@@ -101,52 +147,6 @@ public class UserControllerTests : IClassFixture<UserTestsFixture>
 		// Assert
 		result.StatusCode.Should().Be(200);
 		result.Value.As<GetAllUsersResponse>().Users.Should().BeEquivalentTo(users.Select(x => x.ToUserResponse()));
-	}
-
-	[Fact]
-	public async Task Create_ShouldCreateUser_WhenCreateUserRequestIsValid()
-	{
-		// Arrange
-		var expectedCreatedDate = new DateTime(2020, 1, 1, 20, 0, 0);
-		_dateTimeProvider.DateTimeNow.Returns(expectedCreatedDate);
-
-		var user = _fixture.GetUserCreateRequestGenerator().Generate(1).First();
-
-		var createdUser = new User
-		{
-			Id = Guid.NewGuid(),
-			UserName = user.UserName,
-			FirstName = user.FirstName,
-			LastName = user.LastName,
-			Email = user.Email,
-			DateOfBirth = user.DateOfBirth,
-			DateCreated = DateTime.ParseExact("2020-01-01_20:00:00", "yyyy-MM-dd_HH:mm:ss", CultureInfo.InvariantCulture)
-		};
-		_userService.CreateAsync(Arg.Do<User>(x => createdUser = x)).Returns(createdUser);
-
-
-		// Act
-		var result = (CreatedAtActionResult)await _sut.Create(user);
-		var userResponse = createdUser.ToUserResponse();
-
-		// Assert
-		result.StatusCode.Should().Be(201);
-		result.Value.As<UserResponse>().Should().BeEquivalentTo(userResponse);
-		result.RouteValues!["id"].Should().Be(userResponse.Id);
-	}
-
-	[Fact]
-	public async Task Create_ShouldReturnBadRequest_WhenCreateUserRequestIsInvalid()
-	{
-		// Arrange
-		var guid = Guid.NewGuid();
-		_userService.CreateAsync(Arg.Any<User>()).Returns(Errors.User.UserIdAlreadyExists(guid));
-
-		// Act
-		var result = (ObjectResult)await _sut.Create(new UserCreateRequest());
-
-		// Assert
-		result.StatusCode.Should().Be(400);
 	}
 
 	[Fact]
