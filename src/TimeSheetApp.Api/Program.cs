@@ -89,9 +89,12 @@ if (app.Environment.IsDevelopment())
 	app.UseSwaggerUI();
 }
 
-app.UseExceptionHandler("/error");
-
 app.UseHttpsRedirection();
+
+// Authentication
+// Authorization
+
+app.UseExceptionHandler("/error");
 
 app.MapHealthChecks("/_health", new HealthCheckOptions
 {
